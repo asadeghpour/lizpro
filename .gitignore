@@ -1,0 +1,14 @@
+# Secrets
+server_config.json
+*.env
+.env
+.env.*
+
+# MCP / CLI artifacts
+.token
+.tokens
+.cache/
+
+# OS junk
+.DS_Store
+

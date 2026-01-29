@@ -1,0 +1,161 @@
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import {
+  ListToolsRequestSchema,
+  CallToolRequestSchema,
+  ErrorCode,
+  McpError,
+} from "@modelcontextprotocol/sdk/types.js";
+
+// 1. Configuration
+const RANCHER_URL = process.env.RANCHER_URL || "https://prime.elemental.org:8443/v3";
+const RANCHER_TOKEN = process.env.RANCHER_TOKEN || "token-cwlzt:bjndg8qxj88gdcnw77rvm4ghmqtkz6z25bj4w54nflh4d4ftpxkjl7";
+
+interface RancherResponse {
+  data?: any[];
+  [key: string]: any;
+}
+
+const server = new Server(
+  {
+    name: "rancher-server",
+    version: "1.0.0",
+  },
+  {
+    capabilities: {
+      tools: {},
+    },
+  }
+);
+
+/**
+ * Tool Definitions
+ * Listing every resource explicitly so they appear in your /tools list.
+ */
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [
+    // Dynamic Tool
+    {
+      name: "rancher_get_resource",
+      description: "Fetch any single Rancher resource by type and ID",
+      inputSchema: {
+        type: "object",
+        properties: {
+          resourceType: { type: "string" },
+          resourceId: { type: "string" }
+        },
+        required: ["resourceType", "resourceId"]
+      }
+    },
+    // Explicit List Tools
+    { name: "rancher_list_auth_configs", description: "List authConfigs", inputSchema: { type: "object" } },
+    { name: "rancher_list_cloud_credentials", description: "List cloudCredentials", inputSchema: { type: "object" } },
+    { name: "rancher_list_cluster_registration_tokens", description: "List clusterRegistrationTokens", inputSchema: { type: "object" } },
+    { name: "rancher_list_cluster_role_template_bindings", description: "List clusterRoleTemplateBindings", inputSchema: { type: "object" } },
+    { name: "rancher_list_clusters", description: "List all clusters", inputSchema: { type: "object" } },
+    { name: "rancher_list_compose_configs", description: "List composeConfigs", inputSchema: { type: "object" } },
+    { name: "rancher_list_dynamic_schemas", description: "List dynamicSchemas", inputSchema: { type: "object" } },
+    { name: "rancher_list_features", description: "List feature flags", inputSchema: { type: "object" } },
+    { name: "rancher_list_fleet_workspaces", description: "List Fleet Workspaces", inputSchema: { type: "object" } },
+    { name: "rancher_list_global_role_bindings", description: "List globalRoleBindings", inputSchema: { type: "object" } },
+    { name: "rancher_list_global_roles", description: "List globalRoles", inputSchema: { type: "object" } },
+    { name: "rancher_list_group_members", description: "List groupMembers", inputSchema: { type: "object" } },
+    { name: "rancher_list_groups", description: "List groups", inputSchema: { type: "object" } },
+    { name: "rancher_list_kontainer_drivers", description: "List kontainerDrivers", inputSchema: { type: "object" } },
+    { name: "rancher_list_ldap_configs", description: "List ldapConfigs", inputSchema: { type: "object" } },
+    { name: "rancher_list_management_secrets", description: "List managementSecrets", inputSchema: { type: "object" } },
+    { name: "rancher_list_node_drivers", description: "List nodeDrivers", inputSchema: { type: "object" } },
+    { name: "rancher_list_node_pools", description: "List nodePools", inputSchema: { type: "object" } },
+    { name: "rancher_list_nodes", description: "List nodes", inputSchema: { type: "object", properties: { clusterId: { type: "string" } } } },
+    { name: "rancher_list_oidc_clients", description: "List oidcClients", inputSchema: { type: "object" } },
+    { name: "rancher_list_psat", description: "List Pod Security Admission Templates", inputSchema: { type: "object" } },
+    { name: "rancher_list_preferences", description: "List preferences", inputSchema: { type: "object" } },
+    { name: "rancher_list_principals", description: "List principals", inputSchema: { type: "object" } },
+    { name: "rancher_list_project_network_policies", description: "List projectNetworkPolicies", inputSchema: { type: "object" } },
+    { name: "rancher_list_project_role_template_bindings", description: "List projectRoleTemplateBindings", inputSchema: { type: "object" } },
+    { name: "rancher_list_projects", description: "List projects", inputSchema: { type: "object" } },
+    { name: "rancher_list_notifications", description: "List notifications", inputSchema: { type: "object" } },
+    { name: "rancher_list_role_templates", description: "List roleTemplates", inputSchema: { type: "object" } },
+    { name: "rancher_list_saml_tokens", description: "List samlTokens", inputSchema: { type: "object" } },
+    { name: "rancher_list_settings", description: "List settings", inputSchema: { type: "object" } },
+    { name: "rancher_list_tokens", description: "List tokens", inputSchema: { type: "object" } },
+    { name: "rancher_list_users", description: "List users", inputSchema: { type: "object" } }
+  ],
+}));
+
+/**
+ * Tool Handler Logic
+ */
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  const pathMap: Record<string, string> = {
+    "rancher_list_auth_configs": "/authconfigs",
+    "rancher_list_cloud_credentials": "/cloudcredentials",
+    "rancher_list_cluster_registration_tokens": "/clusterregistrationtokens",
+    "rancher_list_cluster_role_template_bindings": "/clusterroletemplatebindings",
+    "rancher_list_clusters": "/clusters",
+    "rancher_list_compose_configs": "/composeconfigs",
+    "rancher_list_dynamic_schemas": "/dynamicschemas",
+    "rancher_list_features": "/features",
+    "rancher_list_fleet_workspaces": "/fleetworkspaces",
+    "rancher_list_global_role_bindings": "/globalrolebindings",
+    "rancher_list_global_roles": "/globalroles",
+    "rancher_list_group_members": "/groupmembers",
+    "rancher_list_groups": "/groups",
+    "rancher_list_kontainer_drivers": "/kontainerdrivers",
+    "rancher_list_ldap_configs": "/ldapconfigs",
+    "rancher_list_management_secrets": "/managementsecrets",
+    "rancher_list_node_drivers": "/nodedrivers",
+    "rancher_list_node_pools": "/nodepools",
+    "rancher_list_nodes": "/nodes",
+    "rancher_list_oidc_clients": "/oidcclients",
+    "rancher_list_psat": "/podsecurityadmissionconfigurationtemplates",
+    "rancher_list_preferences": "/preferences",
+    "rancher_list_principals": "/principals",
+    "rancher_list_project_network_policies": "/projectnetworkpolicies",
+    "rancher_list_project_role_template_bindings": "/projectroletemplatebindings",
+    "rancher_list_projects": "/projects",
+    "rancher_list_notifications": "/rancherusernotifications",
+    "rancher_list_role_templates": "/roletemplates",
+    "rancher_list_saml_tokens": "/samltokens",
+    "rancher_list_settings": "/settings",
+    "rancher_list_tokens": "/tokens",
+    "rancher_list_users": "/users",
+  };
+
+  try {
+    let url = "";
+
+    if (name === "rancher_get_resource") {
+      url = `${RANCHER_URL}/${args?.resourceType}/${args?.resourceId}`;
+    } else if (pathMap[name]) {
+      url = `${RANCHER_URL}${pathMap[name]}`;
+      if (name === "rancher_list_nodes" && args?.clusterId) {
+        url += `?clusterId=${args.clusterId}`;
+      }
+    } else {
+      throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
+    }
+
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${RANCHER_TOKEN}` },
+    });
+
+    if (!response.ok) {
+      return { content: [{ type: "text", text: `Error: ${response.statusText}` }], isError: true };
+    }
+
+    const result = (await response.json()) as RancherResponse;
+    const data = result.data ? result.data : result;
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+    };
+  } catch (error) {
+    return { content: [{ type: "text", text: `Failed: ${String(error)}` }], isError: true };
+  }
+});
+
+const transport = new StdioServerTransport();
+await server.connect(transport);

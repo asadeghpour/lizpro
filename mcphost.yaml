@@ -1,0 +1,15 @@
+agents:
+  default:
+    provider: ollama
+    model: qwen2.5:1.5b
+
+mcpServers:
+  rancher-server:
+    command: /root/.config/nvm/versions/node/v20.20.0/bin/node
+    args:
+      - /root/mcp-k8s-docs/dist/index.js
+    env:
+      RANCHER_URL: https://prime.elemental.org:8443/v3
+      RANCHER_TOKEN: token-cwlzt:bjndg8qxj88gdcnw77rvm4ghmqtkz6z25bj4w54nflh4d4ftpxkjl7
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
+

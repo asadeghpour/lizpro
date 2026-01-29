@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__RK2-Manager",
+      "mcp__k8s-docs-server"
+    ],
+    "ask": [
+      "\"Search the k8s-docs-server for 'resource limits' and then use RK2-Manager to tell me if my current pods have those limits set.\""
+    ]
+  }
+}

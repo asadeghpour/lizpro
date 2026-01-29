@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "rancher-server": {
+      "name": "rancher-server",
+      "command": "/root/.config/nvm/versions/node/v20.20.0/bin/node",
+      "args": [
+        "/root/mcp-k8s-docs/dist/index.js"
+      ],
+      "env": {
+        "RANCHER_URL": "https://prime.elemental.org:8443/v3",
+        "RANCHER_TOKEN": "token-cwlzt:bjndg8qxj88gdcnw77rvm4ghmqtkz6z25bj4w54nflh4d4ftpxkjl7",
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0",
+        "PATH": "/root/.local/share/../bin:/root/.config/nvm/versions/node/v20.20.0/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/.local/bin:/root/bin:/usr/local/bin:/usr/bin:/bin",
+        "PYTHONWARNINGS": "ignore",
+        "LOG_LEVEL": "WARNING",
+        "CHUK_LOG_LEVEL": "WARNING",
+        "MCP_LOG_LEVEL": "WARNING"
+      }
+    }
+  },
+  "defaultProvider": "openai",
+  "defaultModel": "gpt-4",
+  "theme": "default",
+  "verbose": true,
+  "confirmTools": true
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "LizardPro-Integrated": {
+      "command": "node",
+      "args": ["/root/mcp-k8s-docs/dist/index.js"],
+      "env": {
+        "KUBECONFIG": "/root/.kube/config",
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

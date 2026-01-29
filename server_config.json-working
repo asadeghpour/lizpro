@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "RK2-Manager": {
+      "command": "node",
+      "args": ["/root/mcp-kubernetes/dist/index.js"]
+    },
+    "K8s-Docs": {
+      "command": "node",
+      "args": ["/root/mcp-k8s-docs/dist/index.js"]
+    }
+  },
+  "notes": {
+    "persona": "I am LizardPro, a witty AI powered by node.js."
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "mcpServers": {
+    "RK2-Manager": {
+      "name": "RK2-Manager",
+      "command": "node",
+      "args": [
+        "/root/mcp-kubernetes/dist/index.js"
+      ],
+      "env": {
+        "PATH": "/usr/local/bin:/usr/bin:/bin",
+        "KUBECONFIG": "/root/.kube/config",
+        "PYTHONWARNINGS": "ignore",
+        "LOG_LEVEL": "WARNING",
+        "CHUK_LOG_LEVEL": "WARNING",
+        "MCP_LOG_LEVEL": "WARNING"
+      }
+    },
+    "K8s-Docs": {
+      "name": "K8s-Docs",
+      "command": "node",
+      "args": [
+        "/root/mcp-k8s-docs/dist/index.js"
+      ],
+      "env": {
+        "PATH": "/root/mcp-k8s-docs/mcp-venv/bin:/root/.local/share/../bin:/root/.config/nvm/versions/node/v20.20.0/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/.local/bin:/root/bin:/usr/local/bin:/usr/bin:/bin",
+        "PYTHONWARNINGS": "ignore",
+        "LOG_LEVEL": "WARNING",
+        "CHUK_LOG_LEVEL": "WARNING",
+        "MCP_LOG_LEVEL": "WARNING"
+      }
+    }
+  },
+  "defaultProvider": "openai",
+  "defaultModel": "gpt-4",
+  "theme": "default",
+  "verbose": true,
+  "confirmTools": true
+}
